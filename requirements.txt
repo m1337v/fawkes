@@ -1,5 +1,6 @@
 numpy==1.19.5
-tensorflow==2.5.1
+# tensorflow==2.5.1
+tensorflow-gpu==2.5.1
 keras==2.4.3
 mtcnn
 pillow==8.0.0
