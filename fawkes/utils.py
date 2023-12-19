@@ -35,7 +35,7 @@ import tensorflow as tf
 from PIL import Image, ExifTags
 from keras.layers import Dense, Activation
 from keras.models import Model
-from keras.preprocessing import image
+from keras.utils import image_utils as image
 
 from fawkes.align_face import align
 from six.moves.urllib.request import urlopen
