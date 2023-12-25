@@ -40,7 +40,7 @@ from tensorflow.keras.utils import load_img as load
 from tensorflow.keras.utils import array_to_img as a2i
 from tensorflow.keras.utils import img_to_array as i2a
 
-from fawkes.align_face import align
+from align_face import align
 from six.moves.urllib.request import urlopen
 
 if sys.version_info[0] == 2:
