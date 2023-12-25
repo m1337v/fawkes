@@ -263,7 +263,7 @@ def load_victim_model(number_classes, teacher_model=None, end2end=False):
 
 def resize(img, sz):
     assert np.min(img) >= 0 and np.max(img) <= 255.0
-    from keras.preprocessing import image
+    from keras.utils import image_utils as image
     im_data = image.array_to_img(img).resize((sz[1], sz[0]))
     im_data = image.img_to_array(im_data)
     return im_data
