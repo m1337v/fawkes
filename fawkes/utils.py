@@ -35,7 +35,10 @@ import tensorflow as tf
 from PIL import Image, ExifTags
 from keras.layers import Dense, Activation
 from keras.models import Model
-from tensorflow.keras.utils import image_utils as image
+# from tensorflow.keras.utils import image_utils as image
+from tensorflow.keras.utils import load_img as load
+from tensorflow.keras.utils import array_to_img as a2i
+from tensorflow.keras.utils import img_to_array as i2a
 
 from fawkes.align_face import align
 from six.moves.urllib.request import urlopen
@@ -106,7 +109,7 @@ def load_image(path):
             else:
                 pass
     img = img.convert('RGB')
-    image_array = image.img_to_array(img)
+    image_array = image.i2a(img)
 
     return image_array
 
@@ -263,9 +266,8 @@ def load_victim_model(number_classes, teacher_model=None, end2end=False):
 
 def resize(img, sz):
     assert np.min(img) >= 0 and np.max(img) <= 255.0
-    from tensorflow.keras.utils import image_utils as image
-    im_data = image.array_to_img(img).resize((sz[1], sz[0]))
-    im_data = image.img_to_array(im_data)
+    im_data = a2i(img).resize((sz[1], sz[0]))
+    im_data = i2a(im_data)
     return im_data
 
 
@@ -467,7 +469,7 @@ def get_dataset_path(dataset):
 
 
 def dump_image(x, filename, format="png", scale=False):
-    img = image.array_to_img(x, scale=scale)
+    img = a2i(x, scale=scale)
     img.save(filename, format)
     return
 
@@ -546,7 +548,7 @@ def select_target_label(imgs, feature_extractors_ls, feature_extractors_names, m
 
     image_paths = glob.glob(image_dir + "/*.jpg")
 
-    target_images = [image.img_to_array(image.load_img(cur_path)) for cur_path in
+    target_images = [i2a(load(cur_path)) for cur_path in
                      image_paths]
 
     target_images = np.array([resize(x, (IMG_SIZE, IMG_SIZE)) for x in target_images])
