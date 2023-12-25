@@ -76,11 +76,14 @@ setup_requires = []
 
 install_requires = [
     'numpy>=1.19.5',
-    'tensorflow==2.8.0',
-    'keras==2.4.3',
+    'tensorflow-gpu==2.14.0',
+    'keras>=2.9.0',
     'mtcnn',
     'pillow>=7.0.0',
-    'bleach>=2.1.0'
+    'bleach>=2.1.0',
+    'six==1.15.0',
+    'h5py==3.1.0',
+    'protobuf==3.15.0'
 ]
 
 setup(
