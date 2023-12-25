@@ -17,6 +17,8 @@ import shutil
 import sys
 import tarfile
 import zipfile
+import requests
+from pathlib import Path
 
 import PIL
 import pkg_resources
@@ -109,7 +111,7 @@ def load_image(path):
             else:
                 pass
     img = img.convert('RGB')
-    image_array = image.i2a(img)
+    image_array = i2a(img)
 
     return image_array
 
@@ -426,20 +428,26 @@ def build_bottleneck_model(model, cut_off):
 
 
 def load_extractor(name):
-    hash_map = {"extractor_2": "ce703d481db2b83513bbdafa27434703",
-                "extractor_0": "94854151fd9077997d69ceda107f9c6b"}
     assert name in ["extractor_2", 'extractor_0']
-    model_file = pkg_resources.resource_filename("fawkes", "model/{}.h5".format(name))
-    cur_hash = hash_map[name]
-    model_dir = pkg_resources.resource_filename("fawkes", "model/")
-    os.makedirs(model_dir, exist_ok=True)
-    get_file("{}.h5".format(name), "http://mirror.cs.uchicago.edu/fawkes/files/{}.h5".format(name),
-             cache_dir=model_dir, cache_subdir='', md5_hash=cur_hash)
+    model_dir = "/content/fawkes/fawkes/model/"
+    model_file = os.path.join(model_dir, "{}.h5".format(name))
+    model_url = "http://mirror.cs.uchicago.edu/fawkes/files/{}.h5".format(name)
+
+    # Create model directory if it doesn't exist
+    Path(model_dir).mkdir(parents=True, exist_ok=True)
+
+    # Download model file if it doesn't exist
+    if not os.path.exists(model_file):
+        response = requests.get(model_url)
+        if response.status_code == 200:
+            with open(model_file, 'wb') as file:
+                file.write(response.content)
+        else:
+            raise Exception(f"Failed to download model from {model_url}")
 
     model = keras.models.load_model(model_file)
     model = Extractor(model)
     return model
-
 
 class Extractor(object):
     def __init__(self, model):
