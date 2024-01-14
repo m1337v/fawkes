@@ -19,11 +19,11 @@ tf.get_logger().setLevel('ERROR')
 tf.autograph.set_verbosity(3)
 
 import numpy as np
-from differentiator import FawkesMaskGeneration
-from utils import init_gpu, dump_image, reverse_process_cloaked, \
+from fawkes.differentiator import FawkesMaskGeneration
+from fawkes.utils import init_gpu, dump_image, reverse_process_cloaked, \
     Faces, filter_image_paths, load_extractor
 
-from align_face import aligner
+from fawkes.align_face import aligner
 
 
 def generate_cloak_images(protector, image_X, target_emb=None):
@@ -79,7 +79,7 @@ class Fawkes(object):
         return th, max_step, lr, extractors
 
     def run_protection(self, image_paths, th=0.04, sd=1e7, lr=10, max_step=500, batch_size=1, format='png',
-                       separate_target=True, debug=False, no_align=False, exp="", maximize=True,
+                       separate_target=True, debug=False, no_align=False, maximize=True,
                        save_last_on_failed=True):
 
         current_param = "-".join([str(x) for x in [self.th, sd, self.lr, self.max_step, batch_size, format,
@@ -122,7 +122,6 @@ class Fawkes(object):
                                                   save_last_on_failed=save_last_on_failed,
                                                   )
         protected_images = generate_cloak_images(self.protector, original_images)
-        faces.cloaked_cropped_faces = protected_images
 
         final_images, images_without_face = faces.merge_faces(
             reverse_process_cloaked(protected_images, preprocess=PREPROCESS),
